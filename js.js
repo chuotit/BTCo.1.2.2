@@ -16,7 +16,7 @@
             $scope.betMaxLose = $scope.betMaxLoseAllowed = $scope.betCount = 0;
             $scope.btcMaxLoseAllowed = '0.00000001';
             $scope.betHiFlg = true;
-            $scope.betType = 8;
+            $scope.betType = 9;
             $scope.betOnline = true;
             $scope.steps = 1;
 
@@ -100,11 +100,63 @@
                                     $scope.btcMaxLoseAllowed = $scope.betList[$scope.onBigBetCount].btcBet > $scope.btcMaxLoseAllowed ? $scope.betList[$scope.onBigBetCount].btcBet : $scope.btcMaxLoseAllowed;
                                     $scope.betMaxLose = $scope.betMaxLose > loseCount ? $scope.betMaxLose : loseCount;
                                 }
+
+                                if ($scope.betType === 9) {
+                                    if (winCount === 1) {
+                                        if (loseCount === 1) {
+                                            $scope.onBigBetCount = 0;
+                                            $scope.btcForBet = $scope.btcBase;
+
+                                            $scope.betItemIndex = $scope.onBigBetCount + 1;
+                                            if ($scope.betItemIndex >= 2) {
+                                                document.getElementById('line' + ($scope.betItemIndex - 1)).scrollIntoView(true);
+                                            } else {
+                                                document.getElementById('line' + ($scope.betItemIndex)).scrollIntoView(true);
+                                            }
+                                        }
+                                        if (loseCount > 1) {
+                                            $scope.onBigBetCount++
+                                            $scope.btcForBet = $scope.onBigBetCount >= $scope.betLoseAllowed ? $scope.betList[0].btcBet : $scope.betList[$scope.onBigBetCount - 1].btcBet;
+
+                                            $scope.betItemIndex = $scope.onBigBetCount >= $scope.betLoseAllowed ? 0 : $scope.onBigBetCount;
+                                            if ($scope.betItemIndex >= 3) {
+                                                document.getElementById('line' + ($scope.betItemIndex - 1)).scrollIntoView(true);
+                                            }
+                                        }
+                                    }
+                                    if (winCount >= 2) {
+                                        $scope.onBigBetCount = 0;
+                                        $scope.btcForBet = $scope.btcBase;
+                                            
+                                        $scope.betItemIndex = $scope.onBigBetCount + 1;
+                                        if ($scope.betItemIndex >= 2) {
+                                            document.getElementById('line' + ($scope.betItemIndex - 1)).scrollIntoView(true);
+                                        } else {
+                                            document.getElementById('line' + ($scope.betItemIndex)).scrollIntoView(true);
+                                        }
+                                    }
+                                    $scope.betMaxLoseAllowed = $scope.betMaxLoseAllowed > $scope.onBigBetCount + 1 ? $scope.betMaxLoseAllowed : $scope.onBigBetCount + 1;
+                                    $scope.btcMaxLoseAllowed = $scope.betList[$scope.onBigBetCount].btcBet > $scope.btcMaxLoseAllowed ? $scope.betList[$scope.onBigBetCount].btcBet : $scope.btcMaxLoseAllowed;
+                                    $scope.betMaxLose = $scope.betMaxLose > loseCount ? $scope.betMaxLose : loseCount;
+                                }
                                 loseCount = 0;
                             } else {
                                 loseCount++;
 
                                 generalList = getGeneralist(winCount, generalList, 'win-item');
+                                if ($scope.betType === 9) {
+                                    if (winCount != 0) {
+                                        $scope.onBigBetCount++
+                                        $scope.btcForBet = $scope.onBigBetCount >= $scope.betLoseAllowed ? $scope.betList[0].btcBet : $scope.betList[$scope.onBigBetCount - 1].btcBet;
+                                        $scope.betItemIndex = $scope.onBigBetCount >= $scope.betLoseAllowed ? 0 : $scope.onBigBetCount;
+                                        if ($scope.betItemIndex >= 3) {
+                                            document.getElementById('line' + ($scope.betItemIndex - 1)).scrollIntoView(true);
+                                        }
+                                    }
+                                    if (winCount === 0) {
+                                        $scope.btcForBet = $scope.btcBase;
+                                    }
+                                }
 
                                 if ($scope.betType === 8) {
                                     if ($scope.bigBetFlg === false && loseCount === 1) {
@@ -139,7 +191,7 @@
                                 winCount = 0;
                             }
                             // $scope.betSpeed = getBetSpeedAutoPlay(loseCount);
-                            // console.log(loseCount !== 0 ? 'loseCount:' + loseCount : "winCount:" + winCount, '$scope.bigBetFlg' + $scope.bigBetFlg, "$scope.btcForBet:" + $scope.btcForBet, "$scope.onBigBetCount:" + $scope.onBigBetCount);
+                            // console.log(loseCount !== 0 ? 'loseCount:' + loseCount : "winCount:" + winCount, '$scope.bigBetFlg:' + $scope.bigBetFlg, "$scope.btcForBet:" + $scope.btcForBet, "$scope.onBigBetCount:" + $scope.onBigBetCount);
                             // $timeout(function() {
                             $scope.disabledButton = false;
                             $timeout(function () {
